@@ -29,20 +29,25 @@ function App() {
   };
 
   return (
-    <main className="bg-gray-900 min-h-screen text-gray-400 p-6">
-      <h1 className="align-middle text-center  text-4xl">Golden Sun Editor</h1>
+    <main className="min-h-screen bg-gray-900 text-gray-400">
+      <section className="p-6">
+        <h1 className="text-center align-middle text-4xl">Golden Sun Editor</h1>
 
-      <Button variant="secondary" onClick={handleFileLoad}>
-        Load File
-      </Button>
-      <Input />
-      {filePath && (
-        <div>
-          <p>
-            <strong>File Path:</strong> {filePath}
-          </p>
-        </div>
-      )}
+        <Button variant="secondary" onClick={handleFileLoad}>
+          Load File
+        </Button>
+        <Input />
+        {filePath && (
+          <div>
+            <p>
+              <strong>File Path:</strong> {filePath}
+            </p>
+          </div>
+        )}
+      </section>
+      <footer className="fixed bottom-0 flex w-full p-1">
+        <span className="">v0.0.1</span>
+      </footer>
     </main>
   );
 }
