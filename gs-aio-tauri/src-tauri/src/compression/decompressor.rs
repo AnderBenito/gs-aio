@@ -28,13 +28,13 @@ fn decomp_text_unsafe(src: &[u8]) -> Vec<u8> {
             charpntrs = get_int32(src, (asmpchar + (char1 >> 8) * 8 + 4) as usize) - 0x08000000;
         }
 
-        let cmp = get_int16(src, charpntrs);
+        let cmp = get_int16(src, charpntrs as usize);
         if cmp == 0x8000 {
             charpntrs += 2;
             continue;
         }
 
-        let mut char_tree = (chardata + get_int16(src, charpntrs)) << 3;
+        let mut char_tree = (chardata + get_int16(src, charpntrs as usize)) << 3;
         charpntrs += 2;
         let mut char_slot = char_tree - 12;
         let mut depth = 0;
@@ -50,7 +50,7 @@ fn decomp_text_unsafe(src: &[u8]) -> Vec<u8> {
                 char_tree += 1;
             }
             let char_slot_pos = char_slot >> 3;
-            let letter = (get_int16(src, char_slot_pos) >> (char_slot & 7)) & 0xFFF;
+            let letter = (get_int16(src, char_slot_pos as usize) >> (char_slot & 7)) & 0xFFF;
             char_slot -= 12;
             _total += 1;
             c_tree_size += 1;
@@ -80,12 +80,12 @@ fn decomp_text_unsafe(src: &[u8]) -> Vec<u8> {
             charpntrs = get_int32(src, (asmpchar + (char1 >> 8) * 8 + 4) as usize) - 0x08000000;
         }
 
-        if get_int16(src, charpntrs) == 0x8000 {
+        if get_int16(src, charpntrs as usize) == 0x8000 {
             charpntrs += 2;
             continue;
         }
 
-        let mut char_tree = (chardata + get_int16(src, charpntrs)) << 3;
+        let mut char_tree = (chardata + get_int16(src, charpntrs as usize)) << 3;
         charpntrs += 2;
         let mut char_slot = char_tree - 12;
         let mut depth = 0;
@@ -101,7 +101,8 @@ fn decomp_text_unsafe(src: &[u8]) -> Vec<u8> {
             char_tree += 1;
             let char_slot_pos = char_slot >> 3;
             assert_ne!(char_slot_pos, -1);
-            c_tree[pos] = -((get_int16(src, char_slot_pos) >> (char_slot & 7)) & 0xFFF) as i32;
+            c_tree[pos] =
+                -((get_int16(src, char_slot_pos as usize) >> (char_slot & 7)) & 0xFFF) as i32;
             pos += 1;
             char_slot -= 12;
 

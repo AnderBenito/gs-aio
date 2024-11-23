@@ -15,7 +15,7 @@ pub struct AppState {
     pub decomp_text: Arc<[u8]>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct GSRomID {
     pub version: GSRomVersion,
     pub language: GSRomRegion,
@@ -28,6 +28,21 @@ impl GSRomID {
 
         return Ok(GSRomID { language, version });
     }
+
+    pub fn get_abilities_table_address(&self) -> usize {
+        return match (&self.version, &self.language) {
+            (_, GSRomRegion::Spanish) => 0xC0C20,
+            (_, GSRomRegion::USAEurope) => 0x0B7C14,
+            _ => 0,
+        };
+    }
+
+    pub fn get_text_db_offset(&self) -> usize {
+        return match (&self.version, &self.language) {
+            (_, GSRomRegion::Spanish) => 461,
+            _ => 0,
+        };
+    }
 }
 
 #[derive(Debug)]
@@ -36,7 +51,7 @@ pub struct GSRomData {
     pub decomp_text: Arc<[u8]>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum GSRomRegion {
     Spanish,
     Italian,
@@ -71,7 +86,7 @@ impl TryFrom<&[u8]> for GSRomRegion {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum GSRomVersion {
     BrokenSeal,
     TheLostAge,

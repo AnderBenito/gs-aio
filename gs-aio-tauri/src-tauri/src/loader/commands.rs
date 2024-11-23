@@ -1,8 +1,8 @@
 use super::error::Result;
-use crate::compression::decomp_text;
+use crate::{compression::decomp_text, game::get_psynergies};
 use std::{
     fs::File,
-    io::{Read, Write},
+    io::Read,
     path::Path,
     sync::{Arc, Mutex},
 };
@@ -23,13 +23,19 @@ pub fn load_rom(state: tauri::State<Mutex<AppState>>, file_path: String) -> Resu
     let rom_data = Arc::<[u8]>::from(buffer.into_boxed_slice());
 
     let decompressed_text = decomp_text(&rom_data)?;
+    let txt = Arc::<[u8]>::from(decompressed_text.into_boxed_slice());
 
-    let gs_rom_id = GSRomID::from_rom_data(&rom_data);
-    dbg!(gs_rom_id);
+    let gs_rom_id = GSRomID::from_rom_data(&rom_data).unwrap();
 
-    let mut s = state.lock().unwrap();
-    s.rom_data = rom_data;
-    s.decomp_text = Arc::<[u8]>::from(decompressed_text.into_boxed_slice());
+    {
+        let mut s = state.lock().unwrap();
+        s.rom_data = rom_data.clone();
+        s.decomp_text = txt.clone();
+    }
+
+    if let Ok(psynergies) = get_psynergies(&gs_rom_id, &rom_data, &txt) {
+        dbg!(psynergies);
+    }
 
     Ok(())
 }

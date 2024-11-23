@@ -1,6 +1,7 @@
 mod app;
 mod compression;
 mod error;
+mod game;
 mod loader;
 
 use crate::loader::load_rom;
